@@ -74,3 +74,34 @@ This report provides a detailed comparison across **10 key parameters** comparin
 *   **Rust**: Translates directly into native CPU instructions. Zero VM translation layer. Uses minimal CPU cycles.
 *   **Antigravity**: Very low CPU usage, native Go code.
 *   **Python**: Interpreting bytecode requires constant memory allocation/deallocation and garbage collection cycles, causing higher CPU usage under load.
+
+---
+
+## 🚀 Recommended Tech Stack & Tooling Selection
+
+For developing high-performance, secure, and production-ready AI agent CLI harnesses, we recommend the following **optimized tech stack**:
+
+### 1. Programming Language: Rust
+*   **Recommendation**: **Rust (Release)** for the core execution harness, and **Python** reserved *only* for exploratory research or prompt prototyping.
+*   **Why**: Rust provides the absolute best performance-to-safety ratio. The zero-overhead memory safety (no garbage collector) makes it ideal for running agents in memory-constrained sandboxes or containerized environments. It produces single standalone binaries with zero installation overhead.
+
+### 2. Async Runtime: Tokio
+*   **Recommendation**: **Tokio** (Rust) as the asynchronous framework.
+*   **Why**: Tokio's multi-threaded work-stealing scheduler is the industry standard for high-throughput, low-latency async operations. It allows simultaneous execution of sandbox terminals, WebSocket state channels, and compiler verification subprocesses without locking.
+
+### 3. Networking Client: Reqwest with Rustls
+*   **Recommendation**: `reqwest` client configured with `rustls-tls` (pure Rust TLS) instead of native-tls.
+*   **Why**: Pure Rust TLS prevents build-time dependency on system-level OpenSSL libraries (`libssl-dev`), resolving cross-compilation errors and preventing dynamic linking security vulnerabilities.
+
+### 4. Serialization & Type Enforcement: Serde & Serde-JSON
+*   **Recommendation**: **Serde** for type-safe compile-time JSON serialization, replacing dynamic runtime validation libraries like Pydantic.
+*   **Why**: Serde leverages Rust's macro system to generate extremely fast parsing code, executing up to 50x faster than Python's Pydantic validation, preserving type safety while removing runtime overhead.
+
+### 5. CLI Framework: Crossterm
+*   **Recommendation**: **Crossterm** (Rust) for ANSI terminal manipulation, color rendering, and REPL input handling.
+*   **Why**: Cross-platform library that works flawlessly across Linux, macOS, and Windows command prompt interfaces.
+
+### 6. Design and State Pattern: Static Struct Serialization
+*   **Recommendation**: Use standard procedural loops or future-based state machines with serialization to static JSON files (e.g., `session_history.json`).
+*   **Why**: Heavy graph engines like LangGraph are useful for visualizing complex agent networks, but add significant runtime layers and bloat startup latency. A typed struct workflow provides instant execution and clean recovery.
+
