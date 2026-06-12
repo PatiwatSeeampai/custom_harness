@@ -33,6 +33,16 @@ agentic_ai_rs/*.log
 test/mai_output_*/
 agentic_ai_py/test/mai_output_*/
 agentic_ai_rs/test/mai_output_*/
+session_history.json
+chat_history.md
+test/session_history.json
+agentic_ai_py/test/session_history.json
+agentic_ai_rs/test/session_history.json
+chat_history.md
+agentic_ai_py/chat_history.md
+agentic_ai_rs/chat_history.md
+**/session_history.json
+**/chat_history.md
 
 # Obsidian AppImage and unpacked squashfs
 Obsidian-*.AppImage
