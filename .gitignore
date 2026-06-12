@@ -1,0 +1,49 @@
+# Virtual environments
+venv
+agentic_ai_py/venv/
+.venv/
+
+# Node modules
+node_modules/
+agentic_ai_py/node_modules/
+agentic_ai_rs/node_modules/
+
+# Rust build target
+target/
+agentic_ai_rs/target/
+
+# Python cache & compiler files
+__pycache__/
+*.pyc
+agentic_ai_py/__pycache__/
+agentic_ai_rs/__pycache__/
+.pytest_cache/
+agentic_ai_py/.pytest_cache/
+
+# Environment files (Secrets!)
+.env
+*.env
+agentic_ai_py/test/.env
+agentic_ai_rs/test/.env
+
+# Logs and temporary files
+*.log
+agentic_ai_py/*.log
+agentic_ai_rs/*.log
+test/mai_output_*/
+agentic_ai_py/test/mai_output_*/
+agentic_ai_rs/test/mai_output_*/
+
+# Obsidian AppImage and unpacked squashfs
+Obsidian-*.AppImage
+agentic_ai_py/Obsidian-*.AppImage
+squashfs-root
+agentic_ai_py/squashfs-root/
+.obsidian/workspace.json
+.obsidian/workspace
+.obsidian/backups/
+agentic_ai_py/.obsidian/workspace.json
+agentic_ai_rs/.obsidian/workspace.json
+
+# OS files
+.DS_Store
