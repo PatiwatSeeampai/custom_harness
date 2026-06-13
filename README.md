@@ -1,49 +1,92 @@
 # 🤖 MAI CLI — Multi-Language Self-Healing AI Agent Workspace
 
-Welcome to the **MAI CLI** project workspace. This repository contains the source code, guidelines, and performance metrics for the MAI CLI AI coding agent, implemented in both **Python** and **Rust** to compare execution speeds, memory usage, and structural design.
+Welcome to the **MAI CLI** project workspace. This workspace is a multi-language agent sandbox featuring a high-performance **Rust** edition and a legacy **Python** edition designed to compare execution speeds, memory usage, and concurrency paradigms.
 
 ---
 
-## 📂 Project Structure
+## 📐 1. Architecture
 
-This workspace is organized as a multi-language comparison environment:
+The MAI CLI operates as a loop that integrates LLM reasoning with a local compiler and validation environment:
 
-*   **[agentic_ai_rs/](file:///home/admin/project/agentic_ai/agentic_ai_rs)**: The primary, high-performance **Rust** edition. Statically compiled and highly concurrent.
-*   **[agentic_ai_py/](file:///home/admin/project/agentic_ai/agentic_ai_py)**: The legacy **Python** edition. Built using LangGraph workflows.
-*   **[performance_comparison.md](file:///home/admin/project/agentic_ai/performance_comparison.md)**: A detailed, 10-parameter benchmark report comparing the startup speeds, memory usage, and concurrency models of both versions against the host Antigravity CLI.
+```mermaid
+graph TD
+    subgraph Agent Loop [Rust / Python Client]
+        User[User Prompt] -->|REPL Terminal| Agent[MAI Agent]
+        Agent -->|1. Generate Code| Code[Target Code Files]
+        Code -->|2. Trigger Compile/Test| Compiler[Self-Healing Compiler Node]
+        Compiler -->|3. Compile Error Output| Agent
+        Agent -->|4. Final Approved Output| Repo[Target Workspace]
+    end
 
----
+    subgraph Security Guardrails [Safety Layer]
+        Agent -->|Analyze Hooks| Guard[Regex Safety Scanner]
+        Guard -->|Blocks Secrets Leakage / Shell Injections| Blocked[Terminal Alert]
+    end
 
-## ⚡ Quick Performance Highlights
-We measured startup execution time and memory footprint (RSS) directly on our local sandbox:
-
-*   **Startup Time**: Rust (**10 ms**) vs Go-based Antigravity (**143 ms**) vs Python (**1,435 ms**). **Rust is 143x faster than Python!**
-*   **Memory Footprint**: Rust (**5.4 MB**) vs Python (**107.6 MB**) vs Go-based Antigravity (**134.5 MB**). **Rust uses 20x less memory than Python!**
-*   **Distribution**: Rust compiles to a standalone **9.0 MB** binary, requiring zero runtime interpreters or virtual environments.
-
-For more details, see the complete [Performance Comparison Report](file:///home/admin/project/agentic_ai/performance_comparison.md).
-
----
-
-## ⚙️ Features of MAI CLI
-
-Both implementations support the following core features:
-
-1.  **Self-Healing Compiler Loop**: Runs compiler and static linter checks (like `gcc`, `node`, `pytest`, `eslint`, `cppcheck`) on generated files, feeding execution errors back to the LLM to automatically patch and fix bugs up to 3 times.
-2.  **Multi-Language Verification**: Supports code validation in Python, Rust, JavaScript, HTML, CSS, C/C++, TypeScript, SQL, Java, C#, Go, Zig, and many more.
-3.  **Built-in Security Guardrails**: Proactively scans and blocks dangerous code patterns including:
-    *   File deletion commands (`os.remove`, `rm -rf`).
-    *   Hardcoded secrets and API keys (regex-based blocks).
-    *   Shell injection (`subprocess` with `shell=True` and string interpolation).
-    *   SQL injection (enforcing parameterized query standards).
-4.  **Glassmorphic Web Dashboard**: An asynchronous dashboard web server that shows session histories, file content outputs, self-healing timelines, and handles click approvals for file patches.
+    subgraph Dashboard UI [Web Interface]
+        Agent -->|Stream Status| DashServer[Axum / Flask Web Server]
+        DashServer -->|Glassmorphic Webpage| Browser[Web Browser Port 8585]
+    end
+```
 
 ---
 
-## 🚀 How to Run
+## 🔄 2. Workflow
 
-### 1. Configure Shell Aliases
-Add these aliases to your `~/.bashrc` to quickly execute both versions:
+1. **Prompt & Generation**: The user describes a code change request in the REPL interface.
+2. **Self-Healing Loop**: The agent generates or modifies the target source file, then automatically triggers the corresponding local linter or compiler (e.g. `gcc`, `cargo check`, `pytest`, `eslint`, `node --check`):
+   - **Success**: The code is saved, and status logs are written.
+   - **Failure**: The linter/compiler stderr output is fed back into the agent's context window as a prompt extension, requesting a fix. This self-healing cycle runs up to 3 times before timing out.
+3. **Security Check**: The output undergoes a regex security scan to block hardcoded API keys, shell injection commands (e.g., `subprocess(shell=True)`), or file destruction commands (`rm -rf`).
+4. **Telemetry Dashboard**: All compilation cycles, healing history timelines, and token costs are pushed to an asynchronous web server and rendered on a modern glassmorphic dashboard webpage.
+
+---
+
+## 🛠️ 3. Tool Techstack
+
+### Rust Edition (`agentic_ai_rs`) - Recommended
+* **Runtime / Concurrency**: `tokio` (multi-threaded async runtime).
+* **HTTP Client**: `reqwest` (API connections).
+* **JSON Parsing**: `serde`, `serde_json`.
+* **Dashboard Server**: `axum` / `hyper` web services.
+* **Compilation**: Statically compiled binary requiring no local runtime engines.
+
+### Python Edition (`agentic_ai_py`) - Legacy
+* **Agent Engine**: `langgraph` (state orchestration graph), `langchain-openai`.
+* **HTTP Connection**: `requests`, `urllib3`.
+* **Dashboard Server**: `Flask` or `FastAPI`.
+* **Environment**: Virtualenv python environment.
+
+---
+
+## 🗂️ 4. Project Structure
+
+```
+agentic_ai/
+├── agentic_ai_rs/                 # High-performance Rust Edition
+│   ├── src/
+│   │   ├── bin/
+│   │   │   ├── agent.rs           # Rust Agent CLI REPL main entry
+│   │   │   └── dashboard.rs       # Axum web dashboard server
+│   │   ├── lib.rs                 # Shared file operations, security scans & tools
+│   │   └── main.rs                # Library entry wrapper
+│   ├── Cargo.toml                 # Cargo dependencies configuration
+│   └── README.md                  # Rust-specific details
+├── agentic_ai_py/                 # Legacy Python Edition
+│   ├── agent.py                   # Python LangGraph workflow agent
+│   ├── dashboard.py               # Python Flask dashboard web server
+│   ├── SKILL.md                   # Agent tools guidelines
+│   └── requirements.txt           # Python dependency modules
+├── performance_comparison.md      # Detailed benchmarks (Rust vs Python vs Go)
+└── README.md                      # Workspace main documentation
+```
+
+---
+
+## 🚀 5. How to Setup
+
+### 1. Set Up Shell Aliases
+To easily run both versions, add these execution aliases to your `~/.bashrc`:
 ```bash
 # Rust Version (Recommended)
 alias mai="/home/admin/project/agentic_ai/agentic_ai_rs/target/release/agent"
@@ -54,25 +97,44 @@ alias mai-dashboard="/home/admin/project/agentic_ai/agentic_ai_rs/target/release
 alias mai-py="/home/admin/project/agentic_ai/agentic_ai_py/venv/bin/python /home/admin/project/agentic_ai/agentic_ai_py/agent.py"
 alias mai-py-dashboard="/home/admin/project/agentic_ai/agentic_ai_py/venv/bin/python /home/admin/project/agentic_ai/agentic_ai_py/dashboard.py"
 ```
-
-Reload your shell:
+Then refresh your terminal environment:
 ```bash
 source ~/.bashrc
 ```
 
-### 2. Execute CLI REPL
-*   To start the Rust agent:
+---
+
+### 2. Rust Version Compilation
+Navigate to the Rust crate and compile the release binaries:
+```bash
+cd agentic_ai_rs
+cargo build --release
+```
+*   **Run CLI REPL**:
     ```bash
     mai-rs
     ```
-*   To start the Python agent:
-    ```bash
-    mai-py
-    ```
-
-### 3. Open Web Dashboard
-*   Launch the Rust dashboard server:
+*   **Run Web Dashboard Server**:
     ```bash
     mai-dashboard
     ```
-    Open `http://127.0.0.1:8585` in your web browser.
+    *Access the GUI at `http://127.0.0.1:8585`.*
+
+---
+
+### 3. Python Version Execution
+Configure the virtual environment and launch:
+```bash
+cd agentic_ai_py
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+*   **Run CLI REPL**:
+    ```bash
+    mai-py
+    ```
+*   **Run Web Dashboard Server**:
+    ```bash
+    mai-py-dashboard
+    ```
